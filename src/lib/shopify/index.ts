@@ -1,5 +1,10 @@
 import { createStorefrontClient } from "@shopify/hydrogen-react";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 
 const storeClient = createStorefrontClient({
   storeDomain: process.env.NEXT_PUBLIC_STORE_DOMAIN,
@@ -7,15 +12,47 @@ const storeClient = createStorefrontClient({
   privateStorefrontToken: process.env.STOREFRONT_API_TOKEN,
   storefrontApiVersion: "2024-04",
 });
+console.log(storeClient.getStorefrontApiUrl());
+
+const httpLink = new HttpLink({
+  uri: storeClient.getStorefrontApiUrl(),
+  fetch: function (uri, options) {
+    return fetch(uri, {
+      ...(options ?? {}),
+      headers: {
+        ...(options?.headers ?? {}),
+        ...storeClient.getPublicTokenHeaders(),
+      },
+      next: {
+        revalidate: 0,
+      },
+    });
+  },
+});
+
+const serverHttpLink = new HttpLink({
+  uri: storeClient.getStorefrontApiUrl(),
+  fetch: function (uri, options) {
+    return fetch(uri, {
+      ...(options ?? {}),
+      headers: {
+        ...(options?.headers ?? {}),
+        ...storeClient.getPrivateTokenHeaders(),
+      },
+      next: {
+        revalidate: 0,
+      },
+    });
+  },
+});
 
 export const serverClient = new ApolloClient({
-  uri: storeClient.getStorefrontApiUrl(),
-  headers: storeClient.getPrivateTokenHeaders(),
+  link: ApolloLink.from([serverHttpLink]),
   cache: new InMemoryCache({}),
   defaultOptions: {
     watchQuery: {
       fetchPolicy: "no-cache",
-      errorPolicy: "ignore",
+      errorPolicy: "all",
     },
     query: {
       fetchPolicy: "no-cache",
@@ -25,8 +62,7 @@ export const serverClient = new ApolloClient({
 });
 
 export const clientClient = new ApolloClient({
-  uri: storeClient.getStorefrontApiUrl(),
-  headers: storeClient.getPrivateTokenHeaders(),
+  link: ApolloLink.from([httpLink]),
   cache: new InMemoryCache({}),
   defaultOptions: {
     watchQuery: {
@@ -40,6 +76,6 @@ export const clientClient = new ApolloClient({
   },
 });
 
-export const getClient = (env: "server" | "client") => {
-  return env === "server" ? serverClient : clientClient;
+export const getClient = () => {
+  return typeof window === undefined ? serverClient : clientClient;
 };

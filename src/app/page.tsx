@@ -1,6 +1,8 @@
 import { fetchHomepageCollections } from "@/lib/shopify/queries/collections";
-import currency from "currency.js";
-import currencySymbolMap from "currency-symbol-map";
+import { CollectionProductScroll } from "@/components/collection-scroll/product";
+import { fetchHomepageObject } from "@/lib/shopify/queries/homepage";
+import { log } from "console";
+import { randomUUID } from "crypto";
 
 export default async function Home() {
   return (
@@ -35,38 +37,31 @@ function Hero() {
 }
 
 async function Collections() {
-  const collections = await fetchHomepageCollections("server");
+  const { collectionGroupScrolls, collectionProductScrolls } =
+    await fetchHomepageObject();
+  const productScrolls = collectionProductScrolls.map((collection) => (
+    <CollectionProductScroll
+      key={collection.id}
+      props={{
+        id: collection.id,
+        title: collection.title,
+        products: collection.products.edges.map((product) => product.node),
+      }}
+    />
+  ));
 
-  return (
-    <>
-      {collections.collections.edges.map((collection) => (
-        <div className="w-full px-12" key={collection.node.id}>
-          <p>{collection.node.title}</p>
-          <div className="grid grid-cols-4 gap-4">
-            {collection.node.products.edges.map((product) => (
-              <div key={product.node.id} className="col-span-1">
-                <img
-                  className="w-full object-cover w-48 h-96"
-                  src={product.node.featuredImage.url}
-                  alt={product.node.title}
-                />
-                <p>{product.node.title}</p>
-                <p>{product.node.description}</p>
-                <p>
-                  {currency(
-                    product.node.priceRange.minVariantPrice.amount
-                  ).format({
-                    precision: 2,
-                    symbol: currencySymbolMap(
-                      product.node.priceRange.minVariantPrice.currencyCode
-                    ),
-                  })}
-                </p>
-              </div>
-            ))}
-          </div>
+  const groupScrolls = collectionGroupScrolls.map((group) => (
+    <div key={randomUUID()} className="flex flex-row">
+      {group.map((collection) => (
+        <div key={collection.id} className="flex flex-row">
+          {collection.title}
         </div>
       ))}
+    </div>
+  ));
+  return (
+    <>
+      {productScrolls} {groupScrolls}
     </>
   );
 }

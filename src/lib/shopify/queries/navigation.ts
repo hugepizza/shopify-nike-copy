@@ -56,12 +56,11 @@ const GET_NAVIGATION_QUERY = gql`
   }
 `;
 
-export const fetchNavigation = async (env: "server" | "client" = "server") => {
+export const fetchNavigation = async () => {
   try {
-    const resp = await getClient(env).query<FetchNavigation>({
+    const resp = await getClient().query<FetchNavigation>({
       query: GET_NAVIGATION_QUERY,
     });
-    // console.log("resp", resp.data.menu.items);
     return resp.data;
   } catch (error) {
     console.error("Error fetching navigation:", error);
