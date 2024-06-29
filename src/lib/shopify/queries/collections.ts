@@ -1,88 +1,18 @@
 import { gql } from "@apollo/client";
 import { getClient } from "..";
 
-export interface FetchHomepageCollections {
-  collections: {
-    edges: {
-      node: {
-        id: string;
-        title: string;
-        products: {
-          edges: {
-            node: {
-              id: string;
-              title: string;
-              description: string;
-              featuredImage: {
-                altText: string;
-                height: number;
-                url: string;
-                width: number;
-              };
-              priceRange: {
-                minVariantPrice: {
-                  amount: string;
-                  currencyCode: string;
-                };
-              };
-            };
-          }[];
-        };
-      };
-    }[];
-  };
-}
-export const fetchHomepageCollections = async () => {
-  try {
-    const resp = await getClient().query<FetchHomepageCollections>({
-      query: gql`
-        query {
-          collections(first: 2) {
-            edges {
-              node {
-                id
-                title
-                products(first: 5) {
-                  edges {
-                    node {
-                      id
-                      title
-                      description
-                      featuredImage {
-                        altText
-                        height
-                        url
-                        width
-                      }
-                      priceRange {
-                        minVariantPrice {
-                          amount
-                          currencyCode
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-    });
-
-    return resp.data;
-  } catch (error) {
-    console.error("Error fetching homepage collections:", error);
-    throw error;
-  }
-};
-
 export const fetchCollectionProducts = async (collectionGids: string[]) => {
   const resp = await getClient().query<{
     nodes: {
       id: string;
       title: string;
       description: string;
+      image: {
+        altText: string;
+        height: number;
+        url: string;
+        width: number;
+      };
       products: {
         edges: {
           node: {
@@ -113,6 +43,12 @@ export const fetchCollectionProducts = async (collectionGids: string[]) => {
             id
             title
             description
+            image {
+              altText
+              height
+              url
+              width
+            }
             products(first: 5) {
               edges {
                 node {
@@ -179,17 +115,20 @@ export const fetchCollectionGroups = async (collectionGroupIds: string[]) => {
     },
   });
 
-  const collectionGroups = resp.data.nodes.map(
-    (node) =>
-      JSON.parse(
-        node.fields.find((field) => field.key === "items")?.value || "[]"
-      ) as string[]
-  );
+  const collectionGroups = resp.data.nodes.map((node) => ({
+    name:
+      node.fields.find((field) => field.key === "name")?.value || "Untutiled",
+    ids: JSON.parse(
+      node.fields.find((field) => field.key === "items")?.value || "[]"
+    ) as string[],
+  }));
   const groups = await Promise.all(
     collectionGroups.map((collectionGroup) => {
-      return fetchCollectionProducts(collectionGroup);
+      return fetchCollectionProducts(collectionGroup.ids);
     })
   );
-  console.log("xxx", groups);
-  return groups;
+  return collectionGroups.map((g, index) => ({
+    name: g.name,
+    items: groups[index],
+  }));
 };

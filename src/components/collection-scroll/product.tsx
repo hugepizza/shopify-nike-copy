@@ -28,9 +28,9 @@ export async function CollectionProductScroll({
 }) {
   return (
     <>
-      <div className="w-full px-12" key={props.id}>
-        <h3 className="text-2xl mb-6">{props.title}</h3>
-        <div className="flex flex-row gap-4 overflow-x-auto snap-x">
+      <div className="w-full" key={props.id}>
+        <h3 className="text-2xl mb-6 pl-12">{props.title}</h3>
+        <div className="flex flex-row gap-4 overflow-x-scroll snap-x">
           {[
             ...props.products,
             ...props.products,
@@ -39,10 +39,15 @@ export async function CollectionProductScroll({
             ...props.products,
             ...props.products,
             ...props.products,
-          ].map((product) => (
-            <div key={product.id} className="snap-center">
+          ].map((product, index) => (
+            <div
+              key={product.id}
+              className={`snap-start scroll-mx-12 min-w-scroll-w ${
+                index === 0 && "pl-12"
+              }`}
+            >
               <img
-                className="object-cover min-w-[400px] h-[400px]"
+                className="object-cover w-full h-[400px]"
                 src={product.featuredImage.url}
                 alt={product.title}
               />
