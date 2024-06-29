@@ -18,7 +18,7 @@ export const fetchHomepageObject = async () => {
         query {
           metaobject(
             handle: {
-              handle: "home-page-collections-nike-copy"
+              handle: "home-page-nike-copy"
               type: "home_page_collections"
             }
           ) {
@@ -48,16 +48,80 @@ export const fetchHomepageObject = async () => {
       .filter((field) => field.key === "products_scrolls")
       .map((field) => JSON.parse(field.value) as string[])
       .flat();
+    const bannersIds = homePageDate.data.metaobject.fields
+      .filter((field) => field.key === "banners")
+      .map((field) => JSON.parse(field.value) as string[])
+      .flat();
 
     const collectionGroupScrolls = await fetchCollectionGroups(
-        collectionGroupIds
+      collectionGroupIds
     );
     const collectionProductScrolls = await fetchCollectionProducts(
       detailCollectionIds
     );
-    return { collectionGroupScrolls, collectionProductScrolls };
+
+    const banners = await fetchHomepageBannerObject(bannersIds);
+    return { collectionGroupScrolls, collectionProductScrolls, banners };
   } catch (error) {
     console.error("Error fetching homepage collections:", error);
+    throw error;
+  }
+};
+
+export const fetchHomepageBannerObject = async (ids: string[]) => {
+  try {
+    const bannerData = await getClient().query<{
+      nodes: {
+        id: string;
+        fields: {
+          key: string;
+          value?: string;
+        }[];
+      }[];
+    }>({
+      query: gql`
+        query ($ids: [ID!]!) {
+          nodes(ids: $ids) {
+            ... on Metaobject {
+              id
+              fields {
+                type
+                value
+                key
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        ids,
+      },
+    });
+    bannerData.data.nodes.forEach((node) => {
+      node.fields.forEach((field) => {
+        console.log("key", field.key, "value", field.value);
+      });
+    });
+    const banners = bannerData.data.nodes.map((node) => ({
+      id: node.id,
+      title: node.fields.find((field) => field.key === "title")!
+        .value as string,
+      subtitle: node.fields.find((field) => field.key === "subtitle")?.value as
+        | string
+        | undefined,
+      link: node.fields.find((field) => field.key === "link")?.value
+        ? (JSON.parse(
+            node.fields.find((field) => field.key === "link")!.value!
+          ) as {
+            text: string;
+            url: string;
+          })
+        : undefined,
+    }));
+    console.log("banners", banners);
+    return banners;
+  } catch (error) {
+    console.error("Error fetching homepage banners:", error);
     throw error;
   }
 };

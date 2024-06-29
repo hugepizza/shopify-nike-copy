@@ -1,19 +1,22 @@
 import { CollectionProductScroll } from "@/components/collection-scroll/product";
 import { fetchHomepageObject } from "@/lib/shopify/queries/homepage";
 import { CollectionGroupScroll } from "@/components/collection-scroll/group";
+import Banners from "@/components/banner";
 
 export default async function Home() {
+  const { banners } = await fetchHomepageObject();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
+      <Banners banners={banners} />
       <Hero />
-      <Collections />
+      <Scrolls />
     </main>
   );
 }
 function Hero() {
   return (
-    <div className="min-h-screen px-12">
-      <div className="hero-content max-w-full p-0 py-2 flex-col text-center">
+    <div className="min-h-screen px-12 ">
+      <div className="hero-content max-w-full p-0 py-0 flex-col text-center">
         <img
           src="https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/h_1659,c_limit/1d1c7f44-d43b-45f9-aa71-eca4fda65141/nike-just-do-it.jpg"
           className="w-full object-fill animate-fade-in"
@@ -34,7 +37,7 @@ function Hero() {
   );
 }
 
-async function Collections() {
+async function Scrolls() {
   const { collectionGroupScrolls, collectionProductScrolls } =
     await fetchHomepageObject();
   const productScrolls = collectionProductScrolls.map((collection) => (
