@@ -4,8 +4,8 @@ async function Navbar() {
   const navigation = await fetchNavigation();
   return (
     <div className="navbar py-0 h-12 px-12 bg-white sticky z-10">
-      <div className="w-1/5 flex flex-row justify-start">LOGO</div>
-      <div className="h-full grow gap-5 flex justify-center items-center">
+      <div className="navbar-start">LOGO</div>
+      <div className="navbar-center hidden lg:flex h-full grow gap-5 justify-center items-center">
         {navigation.menu.items.map((topItem) => (
           <>
             <div className="drop-trigger h-full flex justify-center items-center">
@@ -16,11 +16,7 @@ async function Navbar() {
                 {topItem.title}
               </div>
               {!!topItem.items.length && (
-                <div
-                  className={`drop grid grid-cols-4 gap-4`}
-                  // className={`drop grid grid-cols-${topItem.items.length} gap-4`}
-                  key={topItem.id}
-                >
+                <div className={`drop grid grid-cols-4 gap-4`} key={topItem.id}>
                   {topItem.items.map((subItem) => (
                     <div
                       className="col-span-1 flex flex-col space-y-2"
@@ -45,7 +41,7 @@ async function Navbar() {
           </>
         ))}
       </div>
-      <div className="w-1/5 flex h-full flex-row justify-end">
+      <div className="navbar-end h-full">
         <div className="h-full py-3">
           <input
             type="text"
