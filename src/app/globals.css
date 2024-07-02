@@ -7,7 +7,22 @@
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
 
-  --scroll-width: calc((100vw - 8rem) / 3);
+  --layout-gap: 3rem;
+  --scroll-width: calc((100vw - 2rem - (var(--layout-gap) * 2)) / 3);
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --layout-gap: 2rem;
+    --scroll-width: calc((100vw - 1rem - (var(--layout-gap) * 2)) / 2);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --layout-gap: 1rem;
+    --scroll-width: calc((100vw - (var(--layout-gap) * 2)) / 1);
+  }
 }
 
 /* @media (prefers-color-scheme: dark) {

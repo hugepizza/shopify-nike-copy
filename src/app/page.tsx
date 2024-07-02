@@ -1,7 +1,6 @@
-import { CollectionProductScroll } from "@/components/collection-scroll/product";
 import { fetchHomepageObject } from "@/lib/shopify/queries/homepage";
-import { CollectionGroupScroll } from "@/components/collection-scroll/group";
 import Banners from "@/components/banner";
+import ScrollClientWrapper from "@/components/collection-scroll/container";
 
 export default async function Home() {
   const { banners } = await fetchHomepageObject();
@@ -15,7 +14,7 @@ export default async function Home() {
 }
 function Hero() {
   return (
-    <div className="min-h-screen px-12 ">
+    <div className="min-h-screen px-layout">
       <div className="hero-content max-w-full p-0 py-0 flex-col text-center">
         <img
           src="https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/h_1659,c_limit/1d1c7f44-d43b-45f9-aa71-eca4fda65141/nike-just-do-it.jpg"
@@ -41,22 +40,25 @@ async function Scrolls() {
   const { collectionGroupScrolls, collectionProductScrolls } =
     await fetchHomepageObject();
   const productScrolls = collectionProductScrolls.map((collection) => (
-    <CollectionProductScroll
+    <ScrollClientWrapper
       key={collection.id}
       props={{
         id: collection.id,
         title: collection.title,
-        products: collection.products.edges.map((product) => product.node),
+        products: [
+          ...collection.products.edges.map((product) => product.node),
+          ...collection.products.edges.map((product) => product.node),
+        ],
       }}
     />
   ));
 
   const groupScrolls = collectionGroupScrolls.map((group) => (
-    <CollectionGroupScroll
+    <ScrollClientWrapper
       key={group.name}
       props={{
-        name: group.name,
-        collections: group.items.map((item) => ({
+        title: group.name,
+        collections: [...group.items, ...group.items].map((item) => ({
           id: item.id,
           title: item.title,
           image: item.image,
