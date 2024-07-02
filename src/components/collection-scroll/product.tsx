@@ -31,15 +31,13 @@ export const CollectionProductScrollZ = forwardRef<
   return (
     <div className="max-w-full" key={props.id}>
       <div
-        className="flex flex-row overflow-x-scroll gap-4 snap-x snap-mandatory"
+        className="flex flex-row overflow-x-scroll gap-4 px-layout snap-x snap-mandatory"
         ref={ref}
       >
         {props.products.map((product, index) => (
           <div
             key={product.id}
-            className={`min-w-scroll-w snap-start scroll-mx-layout mb-8 ${
-              index === 0 && "ml-layout"
-            } ${index === props.products.length - 1 && "mr-layout"}`}
+            className={`min-w-scroll-w snap-start scroll-mx-layout mb-8`}
           >
             <img
               className="object-cover w-full h-[400px]"

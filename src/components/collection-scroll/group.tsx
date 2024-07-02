@@ -19,17 +19,15 @@ export const CollectionGroupScrollZ = forwardRef<
   CollectionGroupScrollProps
 >((props, ref) => {
   return (
-    <div className="w-full">
+    <div className="max-w-full">
       <div
+        className="flex flex-row overflow-x-scroll gap-4 px-layout snap-x snap-mandatory"
         ref={ref}
-        className="flex flex-row gap-4 overflow-x-scroll snap-x snap-mandatory"
       >
         {props.collections.map((collection, index) => (
           <div
             key={collection.id}
-            className={`min-w-scroll-w snap-start scroll-mx-layout mb-8 ${
-              index === 0 && "ml-layout"
-            } ${index === props.collections.length - 1 && "mr-layout"}`}
+            className={`min-w-scroll-w snap-start scroll-mx-layout mb-8`}
           >
             <img
               className="object-cover h-[460px]"
