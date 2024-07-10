@@ -43,7 +43,7 @@ export const fetchHomepageObject = async () => {
       .filter((field) => field.key === "collection_groups_scrolls")
       .map((field) => JSON.parse(field.value) as string[])
       .flat();
-    console.log("collectionGroupIds", collectionGroupIds);
+
     const detailCollectionIds = homePageDate.data.metaobject.fields
       .filter((field) => field.key === "products_scrolls")
       .map((field) => JSON.parse(field.value) as string[])
@@ -98,9 +98,7 @@ export const fetchHomepageBannerObject = async (ids: string[]) => {
       },
     });
     bannerData.data.nodes.forEach((node) => {
-      node.fields.forEach((field) => {
-        console.log("key", field.key, "value", field.value);
-      });
+      node.fields.forEach((field) => {});
     });
     const banners = bannerData.data.nodes.map((node) => ({
       id: node.id,
@@ -118,7 +116,7 @@ export const fetchHomepageBannerObject = async (ids: string[]) => {
           })
         : undefined,
     }));
-    console.log("banners", banners);
+
     return banners;
   } catch (error) {
     console.error("Error fetching homepage banners:", error);

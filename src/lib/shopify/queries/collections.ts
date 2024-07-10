@@ -18,6 +18,7 @@ export const fetchCollectionProducts = async (collectionGids: string[]) => {
           node: {
             id: string;
             title: string;
+            handle: string;
             description: string;
             featuredImage: {
               altText: string;
@@ -54,6 +55,7 @@ export const fetchCollectionProducts = async (collectionGids: string[]) => {
                 node {
                   id
                   title
+                  handle
                   description
                   featuredImage {
                     altText
@@ -83,8 +85,6 @@ export const fetchCollectionProducts = async (collectionGids: string[]) => {
 };
 
 export const fetchCollectionGroups = async (collectionGroupIds: string[]) => {
-  console.log("collectionGroupIds", collectionGroupIds);
-
   const resp = await getClient().query<{
     nodes: {
       id: string;
