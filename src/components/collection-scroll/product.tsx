@@ -1,7 +1,8 @@
 import currency from "currency.js";
-import currencySymbolMap from "currency-symbol-map";
+
 import { forwardRef } from "react";
 import Link from "next/link";
+import { currencyDisplay } from "@/lib/currency";
 export interface CollectionProductScrollProps {
   id: string;
   title: string;
@@ -58,11 +59,9 @@ export const CollectionProductScrollZ = forwardRef<
                 )}
               </p>
               <p className="font-medium">
-                {currency(product.priceRange.minVariantPrice.amount).format({
-                  precision: 2,
-                  symbol: currencySymbolMap(
-                    product.priceRange.minVariantPrice.currencyCode
-                  ),
+                {currencyDisplay({
+                  amount: Number(product.priceRange.minVariantPrice.amount),
+                  currencyCode: product.priceRange.minVariantPrice.currencyCode,
                 })}
               </p>
             </div>

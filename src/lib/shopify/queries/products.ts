@@ -29,8 +29,19 @@ export interface ProductItem {
         node: {
           id: string;
           title: string;
-          price: string;
+          price: {
+            amount: string;
+            currencyCode: string;
+          };
+          image: {
+            originalSrc: string;
+            altText: string;
+          };
           availableForSale: boolean;
+          selectedOptions: {
+            name: string;
+            value: string;
+          }[];
         };
       }[];
     };
@@ -69,7 +80,15 @@ const PRODUCT_ITEM_QUERY = gql`
               amount
               currencyCode
             }
+            image {
+              originalSrc
+              altText
+            }
             availableForSale
+            selectedOptions {
+              name
+              value
+            }
           }
         }
       }

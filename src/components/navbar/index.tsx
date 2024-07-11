@@ -1,10 +1,13 @@
 import { fetchNavigation } from "@/lib/shopify/queries/navigation";
 import "./styles.css";
+import Link from "next/link";
 async function Navbar() {
   const navigation = await fetchNavigation();
   return (
     <div className="navbar py-0 h-12 px-12 bg-white sticky z-10">
-      <div className="navbar-start">LOGO</div>
+      <Link href="/" className="navbar-start">
+        LOGO
+      </Link>
       <div className="navbar-center hidden lg:flex h-full grow gap-5 justify-center items-center">
         {navigation.menu.items.map((topItem) => (
           <>
