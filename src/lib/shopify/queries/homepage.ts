@@ -1,6 +1,10 @@
 import { gql } from "@apollo/client";
 import { getClient } from "..";
-import { fetchCollectionProducts, fetchCollectionGroups } from "./collections";
+import {
+  fetchMultiCollectionsByIds,
+  fetchMultiCollectionsProductsByIds,
+} from "./collections";
+import { fetchCollectionGroups } from "./metadata";
 
 export interface FetchHomepageObject {
   metaobject: {
@@ -56,7 +60,7 @@ export const fetchHomepageObject = async () => {
     const collectionGroupScrolls = await fetchCollectionGroups(
       collectionGroupIds
     );
-    const collectionProductScrolls = await fetchCollectionProducts(
+    const collectionProductScrolls = await fetchMultiCollectionsProductsByIds(
       detailCollectionIds
     );
 

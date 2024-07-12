@@ -1,34 +1,9 @@
 import { gql } from "@apollo/client";
 import { getClient } from "..";
+import { Menu } from "../types/types";
 
-export interface FetchNavigation {
-  menu: {
-    title: string;
-    items: {
-      id: string;
-      title: string;
-      type: string;
-      resource: string;
-      resourceId: string;
-      items: {
-        id: string;
-        title: string;
-        type: string;
-        resource: string;
-        resourceId: string;
-        items: {
-          id: string;
-          title: string;
-          type: string;
-          resource: string;
-          resourceId: string;
-        }[];
-      }[];
-    }[];
-  };
-}
-const GET_NAVIGATION_QUERY = gql`
-  query {
+const getNavigationQuery = gql`
+  query getNavigation {
     menu(handle: "main-menu") {
       title
       items {
@@ -58,8 +33,8 @@ const GET_NAVIGATION_QUERY = gql`
 
 export const fetchNavigation = async () => {
   try {
-    const resp = await getClient().query<FetchNavigation>({
-      query: GET_NAVIGATION_QUERY,
+    const resp = await getClient().query<Menu>({
+      query: getNavigationQuery,
     });
     return resp.data;
   } catch (error) {

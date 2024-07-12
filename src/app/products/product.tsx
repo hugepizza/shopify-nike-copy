@@ -1,14 +1,16 @@
 "use client";
 
-import { ProductItem } from "@/lib/shopify/queries/products";
+import { Product } from "@/lib/shopify/types/types";
 import { Gallery } from "./gallery";
 import { Variants } from "./variants";
 import { useState } from "react";
+import { cookies } from "next/headers";
 
-export function Product({ item }: { item: ProductItem["productByHandle"] }) {
+export function ProductDisplay({ item }: { item: Product }) {
   const [selectedVariantImage, seSelectedVariantImage] = useState<
     string | null
   >(null);
+
   return (
     <div className="px-layout flex flex-row w-full pt-28 h-screen">
       <Gallery
@@ -23,7 +25,7 @@ export function Product({ item }: { item: ProductItem["productByHandle"] }) {
   );
 }
 
-function Actions({ item }: { item: ProductItem["productByHandle"] }) {
+function Actions({ item }: { item: Product }) {
   return (
     <div className="w-full space-y-4">
       <button className="btn btn-block rounded-full hover:bg-opacity-80 btn-accent">

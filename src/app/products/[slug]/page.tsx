@@ -1,11 +1,11 @@
-import { fetchProductItem, ProductItem } from "@/lib/shopify/queries/products";
+import { fetchProduct } from "@/lib/shopify/queries/products";
 import { notFound } from "next/navigation";
-import { Product } from "../product";
+import { ProductDisplay } from "../product";
 
 async function Index({ params }: { params: { slug: string } }) {
-  const item = await fetchProductItem(params.slug);
+  const item = await fetchProduct(params.slug);
   if (!item) notFound();
-  return <Product item={item} />;
+  return <ProductDisplay item={item} />;
 }
 
 export default Index;

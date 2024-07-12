@@ -1,110 +1,84 @@
 import { gql } from "@apollo/client";
 import { getClient } from "..";
-
-export interface ProductItem {
-  productByHandle: {
-    id: string;
-    title: string;
-    description: string;
-    priceRange: {
-      minVariantPrice: {
-        amount: string;
-        currencyCode: string;
-      };
-      maxVariantPrice: {
-        amount: string;
-        currencyCode: string;
-      };
-    };
-    images: {
-      edges: {
-        node: {
-          originalSrc: string;
-          altText: string;
-        };
-      }[];
-    };
-    variants: {
-      edges: {
-        node: {
-          id: string;
-          title: string;
-          price: {
-            amount: string;
-            currencyCode: string;
-          };
-          image: {
-            originalSrc: string;
-            altText: string;
-          };
-          availableForSale: boolean;
-          selectedOptions: {
-            name: string;
-            value: string;
-          }[];
-        };
-      }[];
-    };
-  };
-}
-const PRODUCT_ITEM_QUERY = gql`
-  query getProductByHandle($handle: String!) {
-    productByHandle(handle: $handle) {
+import seoFragment from "../fragments/seo";
+import imageFragment from "../fragments/image";
+import { Product } from "../types/types";
+export const productFragment = gql`
+  fragment product on Product {
+    id
+    handle
+    availableForSale
+    title
+    description
+    descriptionHtml
+    options {
       id
-      title
-      description
-      priceRange {
-        minVariantPrice {
-          amount
-          currencyCode
-        }
-        maxVariantPrice {
-          amount
-          currencyCode
-        }
+      name
+      values
+    }
+    priceRange {
+      maxVariantPrice {
+        amount
+        currencyCode
       }
-      images(first: 5) {
-        edges {
-          node {
-            originalSrc
-            altText
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    variants(first: 250) {
+      edges {
+        node {
+          id
+          title
+          availableForSale
+          selectedOptions {
+            name
+            value
           }
-        }
-      }
-      variants(first: 10) {
-        edges {
-          node {
-            id
-            title
-            price {
-              amount
-              currencyCode
-            }
-            image {
-              originalSrc
-              altText
-            }
-            availableForSale
-            selectedOptions {
-              name
-              value
-            }
+          price {
+            amount
+            currencyCode
           }
         }
       }
     }
+    featuredImage {
+      ...image
+    }
+    images(first: 20) {
+      edges {
+        node {
+          ...image
+        }
+      }
+    }
+    seo {
+      ...seo
+    }
+    tags
+    updatedAt
   }
+  ${imageFragment}
+  ${seoFragment}
 `;
 
-export const fetchProductItem = async (slug: string) => {
+export const getProductQuery = gql`
+  query getProduct($handle: String!) {
+    product(handle: $handle) {
+      ...product
+    }
+  }
+  ${productFragment}
+`;
+
+export const fetchProduct = async (slug: string) => {
   try {
-    const resp = await getClient().query<ProductItem | undefined>({
-      query: PRODUCT_ITEM_QUERY,
+    const resp = await getClient().query<{ product: Product } | undefined>({
+      query: getProductQuery,
       variables: { handle: slug },
     });
-    console.log("slug", slug);
-
-    return resp.data?.productByHandle || null;
+    return resp.data?.product;
   } catch (error) {
     console.error("Error fetching product:", error);
     return null;

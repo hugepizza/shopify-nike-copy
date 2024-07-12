@@ -39,15 +39,15 @@ function Hero() {
 async function Scrolls() {
   const { collectionGroupScrolls, collectionProductScrolls } =
     await fetchHomepageObject();
-  const productScrolls = collectionProductScrolls.map((collection) => (
+  const productScrolls = collectionProductScrolls.map((item) => (
     <ScrollClientWrapper
-      key={collection.id}
+      key={item.handle}
       props={{
-        id: collection.id,
-        title: collection.title,
+        handle: item.handle,
+        title: item.title,
         products: [
-          ...collection.products.edges.map((product) => product.node),
-          ...collection.products.edges.map((product) => product.node),
+          ...item.products.edges.map((product) => product.node),
+          ...item.products.edges.map((product) => product.node),
         ],
       }}
     />
@@ -59,7 +59,7 @@ async function Scrolls() {
       props={{
         title: group.name,
         collections: [...group.items, ...group.items].map((item) => ({
-          id: item.id,
+          handle: item.handle,
           title: item.title,
           image: item.image,
         })),

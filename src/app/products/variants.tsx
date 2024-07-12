@@ -1,14 +1,14 @@
 "use client";
 
 import { currencyDisplay } from "@/lib/currency";
-import { ProductItem } from "@/lib/shopify/queries/products";
+import { Product } from "@/lib/shopify/types/types";
 import { Dispatch, SetStateAction, use, useState } from "react";
 
 export function Variants({
   item,
   setImage: seSelectedVariantImage,
 }: {
-  item: ProductItem["productByHandle"];
+  item: Product;
   setImage: Dispatch<SetStateAction<string | null>>;
 }) {
   const optionNames = item.variants.edges[0].node.selectedOptions.map(

@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import Link from "next/link";
 import { currencyDisplay } from "@/lib/currency";
 export interface CollectionProductScrollProps {
-  id: string;
+  handle: string;
   title: string;
   products: {
     id: string;
@@ -32,7 +32,7 @@ export const CollectionProductScrollZ = forwardRef<
   CollectionProductScrollProps
 >((props, ref) => {
   return (
-    <div className="max-w-full" key={props.id}>
+    <div className="max-w-full" key={props.handle}>
       <div
         className="flex flex-row overflow-x-scroll gap-4 px-layout snap-x snap-mandatory"
         ref={ref}

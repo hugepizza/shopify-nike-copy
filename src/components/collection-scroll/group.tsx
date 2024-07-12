@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 export interface CollectionGroupScrollProps {
   title: string;
   collections: {
-    id: string;
+    handle: string;
     title: string;
     image?: {
       altText: string;
@@ -26,7 +26,7 @@ export const CollectionGroupScrollZ = forwardRef<
       >
         {props.collections.map((collection, index) => (
           <div
-            key={collection.id}
+            key={collection.handle}
             className={`min-w-scroll-w snap-start scroll-mx-layout mb-8`}
           >
             <img
